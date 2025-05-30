@@ -430,7 +430,7 @@ enum {
 
 /* must be large enough to have a negligible runtime cost and small
    enough to call the interrupt callback often. */
-#define JS_INTERRUPT_COUNTER_INIT 10000
+#define JS_INTERRUPT_COUNTER_INIT 1
 
 struct JSContext {
     JSGCObjectHeader header; /* must come first */
@@ -7207,7 +7207,7 @@ static no_inline __exception int __js_poll_interrupts(JSContext *ctx)
 
 static inline __exception int js_poll_interrupts(JSContext *ctx)
 {
-    if (unlikely(--ctx->interrupt_counter <= 0)) {
+    if (--ctx->interrupt_counter <= 0) {
         return __js_poll_interrupts(ctx);
     } else {
         return 0;
