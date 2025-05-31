@@ -7,6 +7,7 @@
 
 #include "quickjs-libc.h"
 #include "quickjs.h"
+#include "utilities.h"
 
 namespace po = boost::program_options;
 
@@ -100,10 +101,8 @@ int main(const int argc, char * argv[]) {
         return 1;
     }
 
-    std::stringstream code_stream;
-    code_stream << file.rdbuf();
+    std::string code = read_ifstream(&file);
     file.close();
-    std::string code = code_stream.str();
 
     JSRuntime* rt = JS_NewRuntime();
     JSContext* ctx = JS_NewContext(rt);
