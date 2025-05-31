@@ -17,3 +17,7 @@ find_package(Boost
 
 add_executable(quickjs_interrupt_explorer src/interrupt_explorer.cpp src/utilities.cpp)
 target_link_libraries(quickjs_interrupt_explorer PRIVATE qjs Boost::program_options)
+
+add_executable(quickjs_disassembler src/disassembler.cpp src/utilities.cpp
+    src/quickjs_bytecode.h)
+target_link_libraries(quickjs_disassembler PRIVATE qjs Boost::program_options)
