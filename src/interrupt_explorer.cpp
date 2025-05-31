@@ -16,7 +16,7 @@ struct interrupt_handler_data {
     bool verbose;
     int num_interrupts;
 
-    int interrupt_at;
+    std::set<int> interrupt_at;
     double interrupt_chance;
 
     std::mt19937* generator;
@@ -32,6 +32,8 @@ int interrupt_handler(JSRuntime * rt, void * opaque) {
         std::cout << "Interruption Point " << data->num_interrupts << std::endl;
     }
 
+    bool interrupt = data->interrupt_at.contains(data->num_interrupts);
+
     data->num_interrupts++;
 
     if (data->interrupt_chance >= 0) {
@@ -40,7 +42,7 @@ int interrupt_handler(JSRuntime * rt, void * opaque) {
         }
     }
 
-    return data->num_interrupts - 1 == data->interrupt_at ? 1 : 0; // Account for num_interrupts already incremented
+    return interrupt ? 1 : 0;
 }
 
 int main(const int argc, char * argv[]) {
@@ -52,7 +54,7 @@ int main(const int argc, char * argv[]) {
     desc.add_options()
         ("help,h", "print help message")
         ("verbose,v", "verbose output, log interruption points when hit")
-        ("interrupt,i", po::value<int>(), "interrupt at interruption point")
+        ("interrupt,i", po::value<std::vector<int>>(), "interrupt at interruption point(s)")
         ("interrupt-chance", po::value<double>(), "random chance to interrupt at each interruption point (0-1)")
         ("call,c", po::value<std::vector<std::string>>(), "function(s) to call after evaluating the script")
         ("file,f", po::value<std::string>(), "input file containing code");
@@ -82,6 +84,13 @@ int main(const int argc, char * argv[]) {
         std::cout << "Running in verbose mode" << std::endl;
     }
 
+    std::set<int> interrupt_at;
+
+    if (vm.contains("interrupt")) {
+        std::vector<int> interrupt_at_vec = vm["interrupt"].as<std::vector<int>>();
+        interrupt_at.insert(interrupt_at_vec.begin(), interrupt_at_vec.end());
+    }
+
     std::string filename = vm["file"].as<std::string>();
     std::ifstream file;
     file.open(filename);
@@ -104,7 +113,7 @@ int main(const int argc, char * argv[]) {
         .suppress = false,
         .verbose = verbose,
         .num_interrupts = 0,
-        .interrupt_at = vm.contains("interrupt") ? vm["interrupt"].as<int>() : -1,
+        .interrupt_at = interrupt_at,
         .interrupt_chance = vm.contains("interrupt-chance") ? vm["interrupt-chance"].as<double>() : 0,
         .generator = &mt,
         .random_distribution = &dist,
