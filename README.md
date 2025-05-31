@@ -4,21 +4,32 @@ A set of tools for developing code which runs in QuickJS.
 
 ## Building
 
-### macOS
+### Dependencies
+
+Building QuickJS Tools requires the following build tools:
+- A C++ toolchain
+- CMake
+
+The following dependencies are used by QuickJS Tools which must also be installed:
+- Boost.Program_options
+
+Examples to install these dependencies for macOS and Debian derivatives are provided below:
+
+#### macOS
 
 First, install XCode command line tools with:
 ```shell
 xcode-select --install
 ```
 
-Next, to install dependencies with [Homebrew](https://brew.sh):
+Then, to install remaining dependencies with [Homebrew](https://brew.sh):
 ```shell
-brew install boost
+brew install cmake boost
 ```
 
-### Debian and derivatives (Ubuntu, Linux Mint, etc.)
+#### Debian and derivatives (Ubuntu, Linux Mint, etc.)
 
-To install dependencies with `apt`:
+Install dependencies with `apt`:
 ```shell
 apt install build-essential cmake libboost-program-options-dev
 ```
@@ -31,8 +42,8 @@ cmake -B build
 cmake --build build --config Release
 ```
 
-Add the `-j` argument to run multiple compilation jobs in parallel,
-for example. `cmake --build build --config Release -j 4` will run 4 jobs in parallel.
+Add the `-j` argument to run multiple compilation jobs in parallel;
+for example, `cmake --build build --config Release -j 4` will run 4 jobs in parallel.
 
 Built executables will be available in the `build/` folder.
 
@@ -60,6 +71,6 @@ quickjs_interrupt_explorer -f test.js -v
 # Run test.js and interrupt the second interruption point (NOTE: interruption indexing starts at 0)
 quickjs_interrupt_explorer -f test.js -i 1
 
-# Run test.js, then call the function named foo
-quickjs_interrupt_explorer -f test.js -c foo
+# Run test.js, then call the function named foo twice and interrupt at the 3rd interruption point to test recovery from interruption
+quickjs_interrupt_explorer -f test.js -c foo -c foo -i 2
 ```
