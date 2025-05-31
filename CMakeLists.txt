@@ -8,5 +8,11 @@ set(QJS_BUILD_LIBC ON)
 
 add_subdirectory(extern)
 
-add_executable(quickjs_interrupt_explorer interrupt_explorer.cpp)
-target_link_libraries(quickjs_interrupt_explorer PRIVATE qjs)
+find_package(Boost
+    1.87.0
+    REQUIRED
+    COMPONENTS program_options
+)
+
+add_executable(quickjs_interrupt_explorer src/interrupt_explorer.cpp)
+target_link_libraries(quickjs_interrupt_explorer PRIVATE qjs Boost::program_options)
