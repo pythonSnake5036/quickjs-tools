@@ -59,4 +59,7 @@ quickjs_interrupt_explorer -f test.js -v
 
 # Run test.js and interrupt the second interruption point (NOTE: interruption indexing starts at 0)
 quickjs_interrupt_explorer -f test.js -i 1
+
+# Run test.js, then call the function named foo
+quickjs_interrupt_explorer -f test.js -c foo
 ```
