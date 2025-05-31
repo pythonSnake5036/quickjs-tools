@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.25)
 project(quickjs_tools)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -9,7 +9,7 @@ set(QJS_BUILD_LIBC ON)
 add_subdirectory(extern)
 
 find_package(Boost
-    1.87.0
+    1.83.0
     REQUIRED
     COMPONENTS program_options
 )

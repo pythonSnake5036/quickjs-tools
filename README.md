@@ -4,13 +4,23 @@ A set of tools for developing code which runs in QuickJS.
 
 ## Building
 
-### Dependencies
+### macOS
 
-**macOS**
+First, install XCode command line tools with:
+```shell
+xcode-select --install
+```
 
-Install dependencies with Homebrew:
+Next, to install dependencies with [Homebrew](https://brew.sh):
 ```shell
 brew install boost
+```
+
+### Debian and derivatives (Ubuntu, Linux Mint, etc.)
+
+To install dependencies with `apt`:
+```shell
+apt install build-essential cmake libboost-program-options-dev
 ```
 
 ### Build
