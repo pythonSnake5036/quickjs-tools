@@ -9,6 +9,7 @@ set(QJS_BUILD_LIBC ON)
 add_subdirectory(extern)
 
 find_package(Boost
+    CONFIG
     1.83.0
     REQUIRED
     COMPONENTS program_options
