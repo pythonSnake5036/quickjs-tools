@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <sstream>
 
 #include <boost/program_options.hpp>
@@ -14,6 +15,10 @@ struct interrupt_handler_data {
     int num_interrupts;
 
     int interrupt_at;
+    double interrupt_chance;
+
+    std::mt19937* generator;
+    std::uniform_real_distribution<double> * random_distribution;
 };
 
 int interrupt_handler(JSRuntime * rt, void * opaque) {
@@ -23,15 +28,28 @@ int interrupt_handler(JSRuntime * rt, void * opaque) {
         std::cout << "Interruption Point " << data->num_interrupts << std::endl;
     }
 
-    return data->num_interrupts++ == data->interrupt_at ? 1 : 0;
+    data->num_interrupts++;
+
+    if (data->interrupt_chance >= 0) {
+        if ((*data->random_distribution)(*data->generator) < data->interrupt_chance) {
+            return 1;
+        }
+    }
+
+    return data->num_interrupts - 1 == data->interrupt_at ? 1 : 0; // Account for num_interrupts already incremented
 }
 
 int main(const int argc, char * argv[]) {
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "print help message")
         ("verbose,v", "verbose output, log interruption points when hit")
         ("interrupt,i", po::value<int>(), "interrupt at interruption point")
+        ("interrupt-chance", po::value<double>(), "random chance to interrupt at each interruption point (0-1)")
         ("file,f", po::value<std::string>(), "input file containing code");
     po::variables_map vm;
     try {
@@ -77,6 +95,9 @@ int main(const int argc, char * argv[]) {
         .verbose = verbose,
         .num_interrupts = 0,
         .interrupt_at = vm.contains("interrupt") ? vm["interrupt"].as<int>() : -1,
+        .interrupt_chance = vm.contains("interrupt-chance") ? vm["interrupt-chance"].as<double>() : 0,
+        .generator = &mt,
+        .random_distribution = &dist,
     };
 
     JSRuntime* rt = JS_NewRuntime();
